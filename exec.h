@@ -9,26 +9,27 @@
 
 #include "sort.h"
 
-void _ls(char *, int, int);
+void _ls(char *, int);
 void _sort(char **);
 void _wc(char **);
 void _cat(char **);
+void _echo(char **);
 
 void runexec(char **argv) {
     if (strncmp(argv[0], "ls", 3) == 0) {
-        _ls(".", 0, 0);
-        // } else if (strncmp(argv[0], "sort", 5) == 0) {
-        //     _sort(argv);
+        _ls(".", 0);
     } else if (strncmp(argv[0], "wc", 3) == 0) {
         _wc(argv);
     } else if (strncmp(argv[0], "cat", 4) == 0) {
         _cat(argv);
+    } else if (strncmp(argv[0], "echo", 5) == 0) {
+        _echo(argv);
     } else {
         fprintf(stderr, "exec nao implementado\n");
     }
 }
 
-void _ls(char *dir, int op_a, int op_l) {
+void _ls(char *dir, int op_a) {
     struct dirent *d;
     DIR *dh = opendir(dir);
 
@@ -41,14 +42,47 @@ void _ls(char *dir, int op_a, int op_l) {
         exit(EXIT_FAILURE);
     }
 
+    int c = 0;
+
     while ((d = readdir(dh)) != NULL) {
-        if (!op_a && d->d_name[0] == '.')
-            continue;
-        printf("%s ", d->d_name);
-        if (op_l)
-            printf("\n");
+        c++;
     }
-    printf("\n");
+
+    dh = opendir(dir);
+
+    if (!dh) {
+        if (errno == ENOENT) {
+            fprintf(stderr, "directory does not exist\n");
+            exit(EXIT_FAILURE);
+        }
+        fprintf(stderr, "unable to read directory\n");
+        exit(EXIT_FAILURE);
+    }
+
+    char **files = (char **)malloc(c * sizeof(char *));
+    for (int i = 0; i < c; i++)
+        files[i] = (char *)malloc(256 * sizeof(char));
+
+    int i = 0;
+    while ((d = readdir(dh)) != NULL) {
+        strncpy(files[i], d->d_name, 256);
+        i++;
+    }
+
+    quicksort(files, c);
+
+    if (op_a) {
+        for (int i = 0; i < c; i++) {
+            printf("%s\n", files[i]);
+        }
+    } else {
+        for (int i = 0; i < c; i++) {
+            if (files[i][0] != '.')
+                printf("%s\n", files[i]);
+        }
+    }
+
+    free(files);
 }
 
 /*
@@ -161,6 +195,14 @@ void _cat(char **argv) {
         free(buffer);
         fclose(fp);
     }
+}
+
+void _echo(char **argv) {
+    int c = 1;
+    while (argv[c] != NULL)
+        printf("%s ", argv[c++]);
+
+    printf("\n");
 }
 
 #endif
