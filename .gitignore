@@ -2,3 +2,5 @@
 *.pdf
 *.txt
 sh
+*.out
+signaltester
