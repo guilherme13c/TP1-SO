@@ -14,7 +14,7 @@ grupo.  Substitua XX pela contribuição de cada membro do grupo no
 desenvolvimento do trabalho.
 
 João Luiz Figueiredo Cerqueira joaolfc@ufmg.br Responsável por criar o arquivo proc.h.
-Guilherme Soeiro . Responsável pela primeira parte do trabalho e pelo arquivo sig.h.
+Guilherme soeiro de carvalho caporali . Responsável pela primeira parte do trabalho e pelo arquivo sig.h.
 
 meutop.c foi feita pelos 2.
 
