@@ -25,15 +25,15 @@ int readInput(int *pid, int *sig) {
     fd_set set;
     struct timeval timeout;
 
-    FD_ZERO(&set);   /* clear the set */
-    FD_SET(0, &set); /* add our file descriptor to the set */
+    FD_ZERO(&set);
+    FD_SET(0, &set);
 
     timeout.tv_sec = 0;
-    timeout.tv_usec = 100000; // 1ms timeout interval
+    timeout.tv_usec = 100000;
 
     int rv = select(1, &set, NULL, NULL, &timeout);
     if (rv == -1)
-        perror("select"); /* an error accured */
+        perror("select");
     else if (rv == 0)
         return 0;
     else {

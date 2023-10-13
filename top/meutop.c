@@ -31,14 +31,15 @@ int main(void) {
         return -1;
     }
 
-    int input_pid, input_sig;
+    int input_pid, input_sig, c = 0;
     while (1) {
         printf("\033[H\033[J");
 
         print_table(stdout, processes);
 
         if (readInput(&input_pid, &input_sig)) {
-            struct signalThreadArgs args = {.pid = input_pid, .signal = input_sig};
+            struct signalThreadArgs args = {.pid = input_pid,
+                                            .signal = input_sig};
             sendSignal(&args);
         }
     }

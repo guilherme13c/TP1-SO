@@ -37,11 +37,8 @@ void getProcesses(struct ProcessInfo *ps) {
 
     while ((entry = readdir(dir)) != NULL && count < MAX_PROC_COUNT) {
         if (atoi(entry->d_name) != 0) {
-
-            // Get PID
             ps[count].pid = atoi(entry->d_name);
 
-            // Get username
             sprintf(filepath, "/proc/%s", entry->d_name);
             if (stat(filepath, &filestat) == -1) {
                 perror("Unable to stat file");
@@ -51,7 +48,6 @@ void getProcesses(struct ProcessInfo *ps) {
             strncpy(ps[count].username, pwd->pw_name,
                     sizeof(ps[count].username));
 
-            // Get process name
             sprintf(filepath, "/proc/%s/comm", entry->d_name);
             fp = fopen(filepath, "r");
             if (fp == NULL) {
@@ -60,11 +56,10 @@ void getProcesses(struct ProcessInfo *ps) {
             }
 
             fgets(buffer, sizeof(buffer), fp);
-            buffer[strlen(buffer) - 1] = '\0'; // Remove newline
+            buffer[strlen(buffer) - 1] = '\0';
             strncpy(ps[count].procname, buffer, sizeof(ps[count].procname));
             fclose(fp);
 
-            // Get process state
             sprintf(filepath, "/proc/%s/stat", entry->d_name);
             fp = fopen(filepath, "r");
             if (fp == NULL) {
