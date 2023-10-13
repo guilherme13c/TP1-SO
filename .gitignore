@@ -1,6 +1,5 @@
 .vscode/
 *.pdf
-*.txt
 sh
 *.out
 signaltester
