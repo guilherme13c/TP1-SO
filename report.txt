@@ -9,40 +9,44 @@ material da Internet nem obtiveram código de terceiros.
 
 2. Membros do grupo e alocação de esforço
 
-Preencha as linhas abaixo com o nome e o e-mail dos integrantes do
-grupo.  Substitua XX pela contribuição de cada membro do grupo no
-desenvolvimento do trabalho.
-
-João Luiz Figueiredo Cerqueira joaolfc@ufmg.br Responsável por criar o arquivo proc.h.
-Guilherme Soeiro de Carvalho Caporali . Responsável pela primeira parte do trabalho e pelo arquivo sig.h.
+João Luiz Figueiredo Cerqueira [joaolfc@ufmg.br] Responsável por criar o arquivo proc.h. (50%)
+Guilherme Soeiro de Carvalho Caporali [guilhermesoeiro@dcc.ufmg.br] Responsável pela primeira parte do trabalho e pelo arquivo sig.h. (50%)
 
 meutop.c foi feita pelos 2.
 
 3. Referências bibliográficas
 
-põe alguma documentacao de lib e tals
+- Conteúdo visto em sala e fornecido via moodle;
+- Entrada não bloqueante (https://stackoverflow.com/questions/717572/how-do-you-do-non-blocking-console-i-o-on-linux-in-c);
+- htop (https://github.com/htop-dev/htop)
+- comandos do linux (https://linux.die.net)
 
 4. Estruturas de dados
 
 Parte 1:
 
-
+A primeira parte do trabalho não exigiu que nenhum tipo abstrato fosse implementado, além daqueles fornecidos no material base. O programa apenas faz uso de APIs do linux, como dup, execvp, open, etc. para implementar as funcionalidades pedidas.
 
 Parte 2:
 
-
-###  Estrutura ProcessInfo
+#  Estrutura ProcessInfo
 Essa estrutura é usada para armazenar a informação relativa a cada processo. Ela guarda o identificador do processo (PID), o nome do usuário do processo (username), o nome do processo (procname), e o estado atual do processo (state). Estes dados são extraídos dos arquivos do sistema disponíveis no diretório /proc.
 
-###  Estrutura signalThreadArgs
+#  Estrutura signalThreadArgs
 O propósito principal deste struct é armazenar os parâmetros que serão passados para a thread que enviará um sinal para um processo específico. Estes parâmetros são o PID do processo e o identificador do sinal a ser enviado.
 
-##   Threads
+#   Threads
 O software utiliza threads para possibilitar a coleta contínua de informações sobre os processos enquanto possibilita ao usuário interagir com o programa. A coleta de informações é feita por uma thread que é inicializada assim que o programa é iniciado (usando a biblioteca pthreads). Essa thread então realiza a coleta dos dados dos processos a cada segundo.
 
-##   Leitura de Entrada Não-Bloqueante
+#   Leitura de Entrada Não-Bloqueante
 Para permitir que o programa continue a executar suas tarefas enquanto espera pela entrada do usuário, empregamos um método de entrada não-bloqueante. Isso é feito usando a função `select`, que permite ao programa monitorar múltiplos file descriptors para ver se a leitura (ou escrita) é possível neles.
 
 Configuramos o tempo limite para a função select como um valor muito pequeno. Dessa forma, se a entrada do usuário estiver disponível, a função select retornará imediatamente com um valor maior que zero. Por outro lado, se a entrada do usuário não estiver presente, a função select retornará zero depois de esperar pelo tempo limite (muito pequeno). 
 
 Desse modo, o programa pode continuar a executar suas outras tarefas enquanto aguarda pela entrada do usuário, alcançando um comportamento não-bloqueante.
+
+É importante destacar que a funcionalidade de envio de sinal não fornece feedback visual, ou seja, o que está sendo digitado não é mostrado na tela. Isso é fruto da dificuldade de salvar cada caractere digitado em tempo real. Uma possível solução seria utilizar alguma biblioteca de gestão de terminal avançada (e.g. ncurses). Contudo, isso iria inseria uma grande complexidade no desenvolvimento, sendo julgado como algo fora do escopo.
+
+5. Como usar
+
+Foi implementado um arquivo Makefile que pode ser utilizado para compilar os programas. O comando 'make all', ao ser executado no diretório raiz do projeto, deverá criar os dois executáveis (meutop, sh).

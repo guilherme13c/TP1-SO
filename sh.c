@@ -8,9 +8,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-/* MARK NAME Seu Nome Aqui */
-/* MARK NAME Nome de Outro Integrante Aqui */
-/* MARK NAME E Etc */
+// Guilherme Soeiro de Carvalho Caporali
+// João Luiz Figueiredo Cerqueira
 
 /****************************************************************
  * Shell xv6 simplificado
@@ -21,10 +20,10 @@
 
 #define MAXARGS 10
 
-/* Todos comandos tem um tipo.  Depois de olhar para o tipo do
- * comando, o código converte um *cmd para o tipo específico de
- * comando. */
-struct cmd {
+    /* Todos comandos tem um tipo.  Depois de olhar para o tipo do
+     * comando, o código converte um *cmd para o tipo específico de
+     * comando. */
+    struct cmd {
     int type; /* ' ' (exec)
                  '|' (pipe)
                  '<' or '>' (redirection) */
@@ -70,21 +69,14 @@ void runcmd(struct cmd *cmd) {
         ecmd = (struct execcmd *)cmd;
         if (ecmd->argv[0] == 0)
             exit(0);
-        /* MARK START task2
-         * TAREFA2: Implemente codigo abaixo para executar
-         * comandos simples. */
-        // fprintf(stderr, "exec nao implementado\n");
+
         execvp(ecmd->argv[0], ecmd->argv);
-        /* MARK END task2 */
+
         break;
 
     case '>':
     case '<':
         rcmd = (struct redircmd *)cmd;
-        /* MARK START task3
-         * TAREFA3: Implemente codigo abaixo para executar
-         * comando com redirecionamento. */
-        /* MARK END task3 */
 
         int fd = -1;
         if (rcmd->type == '>') {
@@ -149,9 +141,7 @@ void runcmd(struct cmd *cmd) {
 
     case '|':
         pcmd = (struct pipecmd *)cmd;
-        /* MARK START task4
-         * TAREFA4: Implemente codigo abaixo para executar
-         * comando com pipes. */
+
         int pipe_fd[2];
         if (pipe(pipe_fd) < 0) {
             fprintf(stderr, "Failed to create pipe\n");
@@ -165,10 +155,9 @@ void runcmd(struct cmd *cmd) {
         }
 
         if (left_pid == 0) {
-            // Child process on the left side of the pipe
-            close(pipe_fd[0]);               // Close the read end of the pipe
-            dup2(pipe_fd[1], STDOUT_FILENO); // Redirect stdout to the pipe
-            close(pipe_fd[1]);               // Close the write end of the pipe
+            close(pipe_fd[0]);
+            dup2(pipe_fd[1], STDOUT_FILENO);
+            close(pipe_fd[1]);
             runcmd(pcmd->left);
         } else {
             int right_pid = fork1();
@@ -178,23 +167,20 @@ void runcmd(struct cmd *cmd) {
             }
 
             if (right_pid == 0) {
-                // Child process on the right side of the pipe
-                close(pipe_fd[1]); // Close the write end of the pipe
-                dup2(pipe_fd[0], STDIN_FILENO); // Redirect stdin to the pipe
-                close(pipe_fd[0]); // Close the read end of the pipe
+                close(pipe_fd[1]);
+                dup2(pipe_fd[0], STDIN_FILENO);
+                close(pipe_fd[0]);
                 runcmd(pcmd->right);
             } else {
-                // Parent process
-                close(pipe_fd[0]); // Close both ends of the pipe
+                close(pipe_fd[0]);
                 close(pipe_fd[1]);
 
-                // Wait for both child processes to finish
                 int status;
                 waitpid(left_pid, &status, 0);
                 waitpid(right_pid, &status, 0);
             }
         }
-        /* MARK END task4 */
+
         break;
     }
     exit(0);
